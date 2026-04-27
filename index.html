@@ -1,0 +1,907 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Semana 03 · Arquitecturas de Base de Datos</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400;1,700&family=Barlow:wght@300;400;500;600;700&family=Barlow+Condensed:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{
+  --ink:#0a0a0a;--ink2:#2a2a2a;--ink3:#555;--ink4:#888;
+  --paper:#fafaf8;--paper2:#f0f0ee;--paper3:#e4e4e0;
+  --rule:rgba(0,0,0,0.12);--rule2:rgba(0,0,0,0.06);
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+html{scroll-behavior:smooth;}
+body{
+  background:var(--paper);color:var(--ink);
+  font-family:'Barlow',sans-serif;
+  overflow-x:hidden;cursor:none;
+}
+::-webkit-scrollbar{width:3px;}
+::-webkit-scrollbar-track{background:var(--paper);}
+::-webkit-scrollbar-thumb{background:var(--ink);}
+ 
+/* CURSOR */
+.cur{position:fixed;width:10px;height:10px;background:var(--ink);border-radius:50%;pointer-events:none;z-index:9999;transform:translate(-50%,-50%);transition:width .2s,height .2s,background .2s;}
+.cur.big{width:36px;height:36px;background:transparent;border:1.5px solid var(--ink);}
+ 
+/* PROGRESS */
+.pbar{position:fixed;top:0;left:0;right:0;height:2px;background:var(--paper3);z-index:300;}
+.pfill{height:100%;background:var(--ink);transition:width .3s;}
+ 
+/* NAV */
+.nav{
+  position:fixed;top:0;left:0;right:0;z-index:200;
+  background:var(--paper);
+  border-bottom:2px solid var(--ink);
+  display:grid;grid-template-columns:1fr auto 1fr;
+  align-items:center;padding:0 40px;height:52px;
+}
+.nav-left{font-family:'Barlow Condensed',sans-serif;font-size:11px;letter-spacing:.25em;text-transform:uppercase;color:var(--ink3);}
+.nav-center{font-family:'Playfair Display',serif;font-size:15px;font-weight:700;text-align:center;}
+.nav-right{display:flex;gap:28px;justify-content:flex-end;}
+.nav-link{font-family:'Barlow Condensed',sans-serif;font-size:11px;letter-spacing:.15em;text-transform:uppercase;color:var(--ink3);cursor:pointer;transition:color .2s;text-decoration:none;}
+.nav-link:hover{color:var(--ink);}
+ 
+/* SIDE DOTS */
+.dots{position:fixed;right:20px;top:50%;transform:translateY(-50%);display:flex;flex-direction:column;gap:10px;z-index:200;}
+.dot{width:7px;height:7px;border-radius:50%;background:var(--paper3);border:1px solid var(--ink3);cursor:pointer;transition:all .3s;}
+.dot.on{background:var(--ink);border-color:var(--ink);}
+ 
+/* SECTIONS */
+section{min-height:100vh;padding:52px 0 0;display:flex;align-items:stretch;position:relative;opacity:0;transform:translateY(24px);transition:opacity .8s,transform .8s;}
+section.vis{opacity:1;transform:translateY(0);}
+ 
+/* ── S0: COVER ── */
+#s0{
+  display:grid;grid-template-columns:1fr 1fr;
+  border-bottom:2px solid var(--ink);
+}
+.cover-left{
+  padding:80px 60px 80px 80px;
+  border-right:2px solid var(--ink);
+  display:flex;flex-direction:column;justify-content:space-between;
+}
+.cover-issue{
+  font-family:'Barlow Condensed',sans-serif;
+  font-size:11px;letter-spacing:.3em;text-transform:uppercase;color:var(--ink3);
+  display:flex;align-items:center;gap:14px;
+}
+.cover-issue::before{content:'';width:30px;height:1px;background:var(--ink3);}
+.cover-h{
+  font-family:'Playfair Display',serif;
+  font-size:clamp(68px,8vw,108px);
+  font-weight:900;line-height:.88;
+  letter-spacing:-.04em;
+  margin:40px 0 32px;
+}
+.cover-h em{font-style:italic;display:block;}
+.cover-sub{font-size:15px;font-weight:300;color:var(--ink3);line-height:1.8;max-width:400px;border-top:1px solid var(--rule);padding-top:20px;}
+.cover-meta{display:flex;flex-direction:column;gap:12px;margin-top:40px;}
+.meta-row{display:flex;align-items:baseline;gap:10px;}
+.meta-lbl{font-family:'Barlow Condensed',sans-serif;font-size:10px;letter-spacing:.2em;text-transform:uppercase;color:var(--ink4);min-width:80px;}
+.meta-val{font-size:13px;font-weight:600;}
+ 
+.cover-right{
+  padding:80px 80px 80px 60px;
+  display:flex;flex-direction:column;justify-content:space-between;
+  background:var(--ink);color:var(--paper);
+}
+.cover-index-title{font-family:'Barlow Condensed',sans-serif;font-size:10px;letter-spacing:.3em;text-transform:uppercase;color:rgba(255,255,255,.4);margin-bottom:32px;}
+.idx-item{
+  padding:20px 0;border-bottom:1px solid rgba(255,255,255,.1);
+  display:flex;align-items:flex-start;gap:20px;
+  cursor:pointer;transition:opacity .2s;
+}
+.idx-item:hover{opacity:.7;}
+.idx-item:first-of-type{border-top:1px solid rgba(255,255,255,.1);}
+.idx-n{font-family:'Playfair Display',serif;font-size:32px;font-weight:700;color:rgba(255,255,255,.15);line-height:1;flex-shrink:0;width:48px;}
+.idx-info{}
+.idx-title{font-family:'Barlow Condensed',sans-serif;font-size:16px;font-weight:700;letter-spacing:.02em;line-height:1.2;margin-bottom:4px;}
+.idx-sub{font-size:12px;color:rgba(255,255,255,.45);font-weight:300;}
+.scroll-hint{font-family:'Barlow Condensed',sans-serif;font-size:10px;letter-spacing:.3em;text-transform:uppercase;color:rgba(255,255,255,.3);display:flex;align-items:center;gap:10px;cursor:pointer;}
+.scroll-hint::after{content:'↓';font-size:14px;animation:bob 2s ease-in-out infinite;}
+@keyframes bob{0%,100%{transform:translateY(0);}50%{transform:translateY(5px);}}
+ 
+/* ── SECTION HEADER BAND ── */
+.s-band{
+  position:absolute;top:52px;left:0;right:0;height:48px;
+  background:var(--ink);
+  display:flex;align-items:center;padding:0 80px;
+  gap:24px;
+}
+.s-band-num{font-family:'Playfair Display',serif;font-size:13px;font-style:italic;color:rgba(255,255,255,.4);}
+.s-band-title{font-family:'Barlow Condensed',sans-serif;font-size:13px;font-weight:700;letter-spacing:.2em;text-transform:uppercase;color:white;}
+.s-band-sep{flex:1;height:1px;background:rgba(255,255,255,.15);}
+.s-band-tag{font-family:'Barlow Condensed',sans-serif;font-size:10px;letter-spacing:.2em;text-transform:uppercase;color:rgba(255,255,255,.4);}
+ 
+/* ── S1: FUNDAMENTOS ── */
+#s1{flex-direction:column;}
+.s1-body{
+  flex:1;display:grid;
+  grid-template-columns:2fr 1fr 1fr;
+  grid-template-rows:auto auto;
+  border-top:none;
+  margin-top:100px;
+}
+.s1-main{
+  grid-row:1/3;border-right:1px solid var(--rule);
+  padding:52px 60px 52px 80px;
+}
+.s1-a{border-bottom:1px solid var(--rule);padding:40px 40px 40px 40px;}
+.s1-b{padding:40px;}
+ 
+.section-kicker{font-family:'Barlow Condensed',sans-serif;font-size:10px;letter-spacing:.3em;text-transform:uppercase;color:var(--ink4);margin-bottom:16px;display:flex;align-items:center;gap:10px;}
+.section-kicker::before{content:'';width:16px;height:1px;background:var(--ink4);}
+.section-h{font-family:'Playfair Display',serif;font-size:clamp(28px,3vw,42px);font-weight:700;line-height:1.1;margin-bottom:20px;}
+.section-h em{font-style:italic;}
+.body-text{font-size:14px;font-weight:300;line-height:1.85;color:var(--ink2);}
+.body-text strong{font-weight:600;color:var(--ink);}
+.body-text + .body-text{margin-top:14px;}
+ 
+.pull-quote{
+  border-left:3px solid var(--ink);
+  padding:16px 20px;margin:28px 0;
+  font-family:'Playfair Display',serif;
+  font-size:17px;font-style:italic;
+  line-height:1.6;color:var(--ink2);
+}
+ 
+.obj-list{margin-top:20px;display:flex;flex-direction:column;gap:10px;}
+.obj-item{
+  display:flex;gap:14px;align-items:flex-start;
+  padding:12px 0;border-bottom:1px solid var(--rule2);
+}
+.obj-num{font-family:'Barlow Condensed',sans-serif;font-size:10px;font-weight:700;color:var(--ink4);min-width:24px;padding-top:2px;}
+.obj-text{font-size:13px;font-weight:400;line-height:1.6;color:var(--ink2);}
+.obj-text strong{color:var(--ink);font-weight:600;}
+ 
+.comp-block{margin-top:16px;display:flex;flex-direction:column;gap:6px;}
+.comp-row{padding:12px 14px;background:var(--paper2);border-left:2px solid var(--ink);font-size:12.5px;line-height:1.6;}
+.comp-row strong{display:block;font-size:11px;font-family:'Barlow Condensed',sans-serif;letter-spacing:.1em;text-transform:uppercase;margin-bottom:3px;}
+ 
+/* ── S2: TIPOS ── */
+#s2{flex-direction:column;}
+.s2-body{flex:1;margin-top:100px;}
+.tipos-header{padding:40px 80px 32px;border-bottom:1px solid var(--rule);}
+.tipos-intro{font-size:14px;font-weight:300;color:var(--ink3);max-width:600px;line-height:1.75;margin-top:10px;}
+.tipos-grid{
+  display:grid;grid-template-columns:repeat(6,1fr);
+  border-bottom:1px solid var(--rule);
+}
+.tipo-col{
+  border-right:1px solid var(--rule);padding:32px 28px;
+  transition:background .3s;
+}
+.tipo-col:last-child{border-right:none;}
+.tipo-col:hover{background:var(--ink);color:var(--paper);}
+.tipo-col:hover .tipo-body-t{color:rgba(255,255,255,.6);}
+.tipo-col:hover .tipo-tag{background:rgba(255,255,255,.15);color:rgba(255,255,255,.7);}
+.tipo-n{font-family:'Playfair Display',serif;font-size:48px;font-weight:900;color:var(--paper3);line-height:1;margin-bottom:14px;transition:color .3s;}
+.tipo-col:hover .tipo-n{color:rgba(255,255,255,.1);}
+.tipo-name{font-family:'Barlow Condensed',sans-serif;font-size:15px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;margin-bottom:10px;}
+.tipo-body-t{font-size:12px;line-height:1.7;color:var(--ink3);transition:color .3s;}
+.tipo-tag{display:inline-block;margin-top:10px;font-size:10px;font-family:'Barlow Condensed',sans-serif;letter-spacing:.1em;padding:3px 8px;border:1px solid var(--paper3);color:var(--ink3);transition:all .3s;}
+ 
+.req-row{
+  display:grid;grid-template-columns:1fr 1fr;
+  border-bottom:1px solid var(--rule);
+}
+.req-block{padding:40px 60px 40px 80px;border-right:1px solid var(--rule);}
+.req-block:last-child{border-right:none;padding-left:60px;}
+.req-items{margin-top:16px;display:flex;flex-direction:column;gap:10px;}
+.req-item{display:flex;gap:12px;align-items:flex-start;padding:10px 0;border-bottom:1px solid var(--rule2);}
+.req-item:last-child{border-bottom:none;}
+.req-icon{font-size:16px;min-width:24px;}
+.req-text{font-size:13px;line-height:1.6;color:var(--ink2);}
+.req-text strong{color:var(--ink);font-weight:600;}
+ 
+/* ── S3: MODELADO ── */
+#s3{flex-direction:column;}
+.s3-body{flex:1;margin-top:100px;display:grid;grid-template-columns:1fr 1fr;}
+.s3-left{border-right:1px solid var(--rule);display:flex;flex-direction:column;}
+.s3-right{display:flex;flex-direction:column;}
+.s3-top{padding:48px 60px;border-bottom:1px solid var(--rule);flex:1;}
+.s3-bot{padding:40px 60px;}
+.s3-right .s3-top{padding:48px 80px 48px 60px;}
+.s3-right .s3-bot{padding:40px 80px 40px 60px;}
+ 
+.nivel-stack{display:flex;flex-direction:column;gap:0;margin-top:24px;}
+.nivel{
+  padding:20px 22px;border:1px solid var(--rule);border-top:none;
+  position:relative;transition:background .3s,transform .2s;
+  cursor:default;
+}
+.nivel:first-child{border-top:1px solid var(--rule);}
+.nivel:hover{background:var(--ink);z-index:1;transform:translateX(4px);}
+.nivel:hover .nivel-title{color:white;}
+.nivel:hover .nivel-body-t{color:rgba(255,255,255,.6);}
+.nivel:hover .nivel-badge{background:rgba(255,255,255,.15);color:white;}
+.nivel-badge{display:inline-block;font-family:'Barlow Condensed',sans-serif;font-size:9px;letter-spacing:.2em;text-transform:uppercase;padding:2px 8px;background:var(--paper3);color:var(--ink3);border-radius:0;margin-bottom:8px;transition:all .3s;}
+.nivel-title{font-family:'Barlow Condensed',sans-serif;font-size:16px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;margin-bottom:8px;transition:color .3s;}
+.nivel-body-t{font-size:12.5px;line-height:1.7;color:var(--ink3);transition:color .3s;}
+ 
+.tec-list{margin-top:20px;display:flex;flex-direction:column;gap:14px;}
+.tec-item{padding:16px 0;border-bottom:1px solid var(--rule2);display:grid;grid-template-columns:80px 1fr;gap:16px;}
+.tec-item:last-child{border-bottom:none;}
+.tec-label{font-family:'Barlow Condensed',sans-serif;font-size:10px;font-weight:700;letter-spacing:.15em;text-transform:uppercase;color:var(--ink4);padding-top:2px;}
+.tec-text{font-size:13px;line-height:1.65;color:var(--ink2);}
+.tec-text strong{color:var(--ink);}
+ 
+/* ── S4: NORMALIZACIÓN ── */
+#s4{flex-direction:column;}
+.s4-body{flex:1;margin-top:100px;}
+.s4-top{
+  display:grid;grid-template-columns:1fr 1fr 1fr;
+  border-bottom:1px solid var(--rule);
+}
+.s4-intro{padding:48px 60px 48px 80px;border-right:1px solid var(--rule);}
+.s4-fns{padding:48px 60px;border-right:1px solid var(--rule);}
+.s4-desn{padding:48px 80px 48px 60px;}
+ 
+.fn-list{margin-top:20px;display:flex;flex-direction:column;gap:0;}
+.fn-row{
+  display:flex;gap:0;border-bottom:1px solid var(--rule);
+  transition:background .25s;
+}
+.fn-row:first-child{border-top:1px solid var(--rule);}
+.fn-row:hover{background:var(--paper2);}
+.fn-code{
+  font-family:'Barlow Condensed',sans-serif;
+  font-size:13px;font-weight:800;letter-spacing:.05em;
+  min-width:64px;padding:16px 12px;
+  border-right:1px solid var(--rule);
+  display:flex;align-items:center;
+}
+.fn-content{padding:16px 16px;}
+.fn-name{font-size:13px;font-weight:600;color:var(--ink);margin-bottom:4px;}
+.fn-desc{font-size:12px;color:var(--ink3);line-height:1.6;}
+ 
+.desn-highlight{
+  background:var(--ink);color:var(--paper);
+  padding:20px 22px;margin-top:20px;
+  font-family:'Playfair Display',serif;
+  font-size:15px;font-style:italic;line-height:1.65;
+}
+ 
+.s4-bot{
+  display:grid;grid-template-columns:1fr 1fr;
+  border-bottom:1px solid var(--rule);
+}
+.s4-ex{padding:40px 60px 40px 80px;border-right:1px solid var(--rule);}
+.s4-imp{padding:40px 80px 40px 60px;}
+ 
+.ex-list{margin-top:16px;display:flex;flex-direction:column;gap:10px;}
+.ex-item{display:flex;gap:12px;align-items:flex-start;padding:12px 0;border-bottom:1px solid var(--rule2);}
+.ex-item:last-child{border-bottom:none;}
+.ex-icon{font-size:14px;min-width:22px;margin-top:1px;}
+.ex-text{font-size:13px;line-height:1.65;color:var(--ink2);}
+.ex-text strong{color:var(--ink);}
+ 
+.imp-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:16px;}
+.imp-chip{
+  padding:12px 14px;background:var(--paper2);
+  font-size:12px;font-weight:500;line-height:1.4;
+  border-left:2px solid var(--ink);
+}
+.imp-chip span{display:block;font-family:'Barlow Condensed',sans-serif;font-size:9px;letter-spacing:.15em;text-transform:uppercase;color:var(--ink4);margin-bottom:4px;}
+ 
+/* ── S5: ACTIVIDADES ── */
+#s5{flex-direction:column;}
+.s5-body{flex:1;margin-top:100px;}
+.s5-header{padding:40px 80px;border-bottom:1px solid var(--rule);}
+.s5-grid{
+  display:grid;grid-template-columns:1fr 1fr;
+}
+.s5-col{border-right:1px solid var(--rule);}
+.s5-col:last-child{border-right:none;}
+.s5-ev{padding:36px 60px 36px 80px;border-bottom:1px solid var(--rule);}
+.s5-col:last-child .s5-ev{padding:36px 80px 36px 60px;}
+.s5-col:last-child .s5-ev:last-child{border-bottom:none;}
+ 
+.ev-tag{font-family:'Barlow Condensed',sans-serif;font-size:10px;letter-spacing:.25em;text-transform:uppercase;color:var(--ink4);margin-bottom:12px;display:flex;align-items:center;gap:8px;}
+.ev-tag::before{content:'';width:12px;height:1px;background:var(--ink4);}
+.ev-h{font-family:'Barlow Condensed',sans-serif;font-size:18px;font-weight:700;letter-spacing:.02em;text-transform:uppercase;margin-bottom:12px;}
+.ev-body{font-size:13px;font-weight:300;color:var(--ink2);line-height:1.75;}
+.ev-body strong{font-weight:600;color:var(--ink);}
+ 
+.qa-block{margin-top:16px;display:flex;flex-direction:column;gap:10px;}
+.qa{border:1px solid var(--rule);padding:14px 16px;}
+.qa-q{font-size:12px;font-weight:700;color:var(--ink);margin-bottom:8px;padding-bottom:8px;border-bottom:1px solid var(--rule2);}
+.qa-a{font-size:12px;line-height:1.7;color:var(--ink3);}
+.qa-a strong{color:var(--ink2);font-weight:600;}
+ 
+/* ── S6: CIERRE ── */
+#s6{
+  display:grid;grid-template-columns:1fr 1fr;
+  align-items:stretch;
+}
+.close-left{
+  background:var(--ink);color:var(--paper);
+  padding:80px;
+  display:flex;flex-direction:column;justify-content:space-between;
+}
+.close-big{
+  font-family:'Playfair Display',serif;
+  font-size:clamp(52px,6vw,88px);
+  font-weight:900;line-height:.9;
+  letter-spacing:-.04em;
+}
+.close-big em{font-style:italic;display:block;color:rgba(255,255,255,.4);}
+.close-sub{font-size:14px;font-weight:300;color:rgba(255,255,255,.5);line-height:1.8;max-width:380px;border-top:1px solid rgba(255,255,255,.1);padding-top:24px;}
+.close-meta{display:flex;flex-direction:column;gap:16px;}
+.cm-row{display:flex;flex-direction:column;gap:3px;}
+.cm-lbl{font-family:'Barlow Condensed',sans-serif;font-size:9px;letter-spacing:.3em;text-transform:uppercase;color:rgba(255,255,255,.3);}
+.cm-val{font-size:14px;font-weight:500;}
+ 
+.close-right{
+  padding:80px;
+  display:flex;flex-direction:column;justify-content:space-between;
+  border-left:2px solid var(--ink);
+}
+.rubric-title{font-family:'Barlow Condensed',sans-serif;font-size:11px;letter-spacing:.3em;text-transform:uppercase;color:var(--ink4);margin-bottom:28px;}
+.rubric-list{display:flex;flex-direction:column;gap:0;flex:1;}
+.rubric-item{
+  display:flex;gap:16px;align-items:flex-start;
+  padding:16px 0;border-bottom:1px solid var(--rule);
+  transition:padding-left .2s;
+}
+.rubric-item:first-child{border-top:1px solid var(--rule);}
+.rubric-item:hover{padding-left:8px;}
+.rubric-num{font-family:'Barlow Condensed',sans-serif;font-size:10px;font-weight:700;color:var(--ink4);min-width:24px;padding-top:2px;}
+.rubric-text{font-size:13px;line-height:1.6;color:var(--ink2);}
+.rubric-text strong{color:var(--ink);font-weight:600;}
+ 
+.close-stamp{
+  font-family:'Barlow Condensed',sans-serif;
+  font-size:10px;letter-spacing:.25em;text-transform:uppercase;
+  color:var(--ink4);border-top:1px solid var(--rule);
+  padding-top:20px;
+}
+ 
+/* ANIMATIONS */
+.fu{opacity:0;transform:translateY(20px);transition:opacity .6s,transform .6s;}
+.fu.show{opacity:1;transform:translateY(0);}
+.fr{opacity:0;transform:translateX(-20px);transition:opacity .6s,transform .6s;}
+.fr.show{opacity:1;transform:translateX(0);}
+ 
+@media(max-width:900px){
+  #s0,#s1 .s1-body,#s2 .req-row,#s3 .s3-body,#s4 .s4-top,#s4 .s4-bot,#s5 .s5-grid,#s6{grid-template-columns:1fr;}
+  .cover-right{display:none;}
+  .tipos-grid{grid-template-columns:repeat(2,1fr);}
+  .s-band{padding:0 20px;}
+  .cover-left,.s1-main,.s3-top,.s4-intro,.close-left,.close-right{padding:40px 24px;}
+  .nav{padding:0 20px;}
+  .nav-right{display:none;}
+  body{cursor:auto;}
+  .cur{display:none;}
+}
+</style>
+</head>
+<body>
+ 
+<div class="cur" id="cur"></div>
+<div class="pbar"><div class="pfill" id="pf"></div></div>
+ 
+<nav class="nav">
+  <div class="nav-left">Base de Datos II · UPLA · 2025</div>
+  <div class="nav-center">Semana 03</div>
+  <div class="nav-right">
+    <span class="nav-link" onclick="go(1)">Fundamentos</span>
+    <span class="nav-link" onclick="go(2)">Tipos</span>
+    <span class="nav-link" onclick="go(3)">Modelado</span>
+    <span class="nav-link" onclick="go(4)">Normalización</span>
+    <span class="nav-link" onclick="go(5)">Actividades</span>
+  </div>
+</nav>
+ 
+<div class="dots" id="nd"></div>
+ 
+<!-- ── S0: PORTADA ── -->
+<section id="s0">
+  <div class="cover-left">
+    <div>
+      <div class="cover-issue">Arquitecturas de Base de Datos y su Aplicabilidad Tecnológica</div>
+      <h1 class="cover-h">Resumen<em>Semana</em>03</h1>
+      <p class="cover-sub">
+        Arquitecturas de bases de datos: definición, objetivos, componentes fundamentales, tipos, relación con requisitos del sistema, modelado de datos, niveles de abstracción, normalización y desnormalización.
+      </p>
+    </div>
+    <div class="cover-meta">
+      <div class="meta-row"><span class="meta-lbl">Estudiante</span><span class="meta-val">Alexandra Milagros Cuchula Daniel</span></div>
+      <div class="meta-row"><span class="meta-lbl">Docente</span><span class="meta-val">Mg. Ing. Raúl Fernández Bejarano</span></div>
+      <div class="meta-row"><span class="meta-lbl">Curso</span><span class="meta-val">Base de Datos II · UPLA</span></div>
+      <div class="meta-row"><span class="meta-lbl">Año</span><span class="meta-val">2025</span></div>
+    </div>
+  </div>
+  <div class="cover-right">
+    <div>
+      <div class="cover-index-title">Contenido del resumen</div>
+      <div class="idx-item" onclick="go(1)">
+        <div class="idx-n">01</div>
+        <div class="idx-info">
+          <div class="idx-title">Fundamentos de Arquitecturas de BD</div>
+          <div class="idx-sub">Definición · Objetivos · Componentes</div>
+        </div>
+      </div>
+      <div class="idx-item" onclick="go(2)">
+        <div class="idx-n">02</div>
+        <div class="idx-info">
+          <div class="idx-title">6 Tipos de Arquitecturas</div>
+          <div class="idx-sub">Centralizada · Cliente-Servidor · Distribuida · Nube · Federada · SOA</div>
+        </div>
+      </div>
+      <div class="idx-item" onclick="go(3)">
+        <div class="idx-n">03</div>
+        <div class="idx-info">
+          <div class="idx-title">Modelado de Datos</div>
+          <div class="idx-sub">Niveles de abstracción · ER · UML · Dimensional</div>
+        </div>
+      </div>
+      <div class="idx-item" onclick="go(4)">
+        <div class="idx-n">04</div>
+        <div class="idx-info">
+          <div class="idx-title">Normalización y Formas Normales</div>
+          <div class="idx-sub">1FN · 2FN · 3FN · BCNF · Desnormalización</div>
+        </div>
+      </div>
+      <div class="idx-item" onclick="go(5)">
+        <div class="idx-n">05</div>
+        <div class="idx-info">
+          <div class="idx-title">Actividades Resueltas</div>
+          <div class="idx-sub">Diagramas · Diseño lógico · Normalización aplicada</div>
+        </div>
+      </div>
+    </div>
+    <div class="scroll-hint" onclick="go(1)">Comenzar lectura</div>
+  </div>
+</section>
+ 
+<!-- ── S1: FUNDAMENTOS ── -->
+<section id="s1">
+  <div class="s-band">
+    <span class="s-band-num">01</span>
+    <span class="s-band-title">Fundamentos de Arquitecturas de Base de Datos</span>
+    <span class="s-band-sep"></span>
+    <span class="s-band-tag">Definición · Objetivos · Componentes</span>
+  </div>
+  <div class="s1-body">
+    <div class="s1-main">
+      <div class="section-kicker fu">Tema 01 · Definición</div>
+      <h2 class="section-h fu" style="transition-delay:.1s">¿Qué es una<br><em>Arquitectura</em><br>de BD?</h2>
+      <p class="body-text fu" style="transition-delay:.2s">
+        Una <strong>arquitectura de base de datos</strong> es el conjunto de estructuras, componentes y relaciones que organizan la manera en que los datos son almacenados, gestionados y accedidos en un sistema. Su propósito fundamental es permitir la <strong>gestión eficiente, segura y confiable de los datos</strong>.
+      </p>
+      <p class="body-text fu" style="transition-delay:.25s;margin-top:14px">
+        Comprender las arquitecturas es esencial para diseñar soluciones que respondan a las necesidades actuales: grandes volúmenes de datos, alta concurrencia de usuarios y estrictos requisitos de seguridad y confiabilidad.
+      </p>
+      <div class="pull-quote fu" style="transition-delay:.3s">
+        Una arquitectura sólida se convierte en la columna vertebral de un sistema de información, sobre ella se construyen procesos analíticos, transaccionales y estratégicos.
+      </div>
+      <div class="section-kicker fu" style="transition-delay:.35s">Objetivos principales</div>
+      <div class="obj-list fu" style="transition-delay:.4s">
+        <div class="obj-item"><span class="obj-num">01</span><span class="obj-text"><strong>Estandarizar el almacenamiento:</strong> definir formatos, estructuras y convenciones</span></div>
+        <div class="obj-item"><span class="obj-num">02</span><span class="obj-text"><strong>Optimizar el acceso a datos:</strong> minimizar tiempos de consulta y maximizar rendimiento</span></div>
+        <div class="obj-item"><span class="obj-num">03</span><span class="obj-text"><strong>Garantizar integridad y consistencia:</strong> asegurar que los datos representen fielmente la realidad</span></div>
+        <div class="obj-item"><span class="obj-num">04</span><span class="obj-text"><strong>Soportar escalabilidad:</strong> permitir el crecimiento en volumen y complejidad</span></div>
+        <div class="obj-item"><span class="obj-num">05</span><span class="obj-text"><strong>Proporcionar seguridad:</strong> proteger la información de accesos no autorizados</span></div>
+      </div>
+    </div>
+ 
+    <div class="s1-a">
+      <div class="section-kicker fu" style="transition-delay:.2s">Componentes</div>
+      <h3 class="fu" style="transition-delay:.25s;font-family:'Barlow Condensed',sans-serif;font-size:16px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;margin-bottom:12px;">Toda arquitectura integra</h3>
+      <div class="comp-block fu" style="transition-delay:.3s">
+        <div class="comp-row"><strong>💾 Almacenamiento</strong>Capa física donde residen los datos. Puede ser en disco duro, SSD, servidores distribuidos o en la nube. Su diseño determina el rendimiento y la disponibilidad.</div>
+        <div class="comp-row"><strong>⚙️ Motor de consultas</strong>Software responsable de interpretar y ejecutar las instrucciones SQL. Optimiza los planes de ejecución para acelerar búsquedas y modificaciones.</div>
+        <div class="comp-row"><strong>📋 Catálogo / Metadata</strong>Almacena información sobre la estructura de la BD: tablas, índices, restricciones, usuarios, vistas y permisos.</div>
+      </div>
+    </div>
+ 
+    <div class="s1-b">
+      <div class="comp-block fu" style="transition-delay:.35s">
+        <div class="comp-row"><strong>🔒 Capa de seguridad</strong>Protege los datos mediante autenticación de usuarios, control de accesos, cifrado y auditorías.</div>
+        <div class="comp-row"><strong>🔌 Interfaces (API/ODBC/JDBC)</strong>Permiten la comunicación entre el DBMS y las aplicaciones cliente. Aseguran la interoperabilidad entre plataformas y lenguajes de programación.</div>
+      </div>
+    </div>
+  </div>
+</section>
+ 
+<!-- ── S2: TIPOS ── -->
+<section id="s2">
+  <div class="s-band">
+    <span class="s-band-num">02</span>
+    <span class="s-band-title">Tipos de Arquitecturas de Bases de Datos</span>
+    <span class="s-band-sep"></span>
+    <span class="s-band-tag">6 Tipos · Requisitos · Casos de uso</span>
+  </div>
+  <div class="s2-body">
+    <div class="tipos-header">
+      <div class="section-kicker fu">Tema 02 · Tipos</div>
+      <h2 class="section-h fu" style="transition-delay:.1s;font-size:clamp(22px,2.5vw,34px)">6 Tipos de Arquitecturas de Bases de Datos</h2>
+      <p class="tipos-intro fu" style="transition-delay:.15s">La elección de la arquitectura adecuada depende de los requisitos del sistema: rendimiento, disponibilidad, consistencia y escalabilidad.</p>
+    </div>
+    <div class="tipos-grid fu" style="transition-delay:.2s">
+      <div class="tipo-col">
+        <div class="tipo-n">01</div>
+        <div class="tipo-name">Centralizada</div>
+        <p class="tipo-body-t">Todos los datos se almacenan en un único servidor. Facilita la administración pero limita la escalabilidad. Punto único de fallo.</p>
+        <span class="tipo-tag">Un servidor</span>
+      </div>
+      <div class="tipo-col">
+        <div class="tipo-n">02</div>
+        <div class="tipo-name">Cliente–Servidor</div>
+        <p class="tipo-body-t">Separa la lógica de negocio del almacenamiento. Aumenta la eficiencia y distribuye las cargas de trabajo.</p>
+        <span class="tipo-tag">Multi-usuario</span>
+      </div>
+      <div class="tipo-col">
+        <div class="tipo-n">03</div>
+        <div class="tipo-name">Distribuida</div>
+        <p class="tipo-body-t">Datos en múltiples nodos interconectados. Proporciona tolerancia a fallos y escalabilidad horizontal.</p>
+        <span class="tipo-tag">Alta disponib.</span>
+      </div>
+      <div class="tipo-col">
+        <div class="tipo-n">04</div>
+        <div class="tipo-name">En la Nube</div>
+        <p class="tipo-body-t">Gestión en plataformas cloud (AWS, Azure, GCP). Elasticidad y costos ajustables. Facturación bajo demanda.</p>
+        <span class="tipo-tag">AWS · Azure · GCP</span>
+      </div>
+      <div class="tipo-col">
+        <div class="tipo-n">05</div>
+        <div class="tipo-name">Federada</div>
+        <p class="tipo-body-t">Integra múltiples BD heterogéneas con vista unificada. Ideal para organizaciones con sistemas legados.</p>
+        <span class="tipo-tag">Integración</span>
+      </div>
+      <div class="tipo-col">
+        <div class="tipo-n">06</div>
+        <div class="tipo-name">SOA</div>
+        <p class="tipo-body-t">Datos gestionados como servicios independientes. Muy utilizada en microservicios y arquitecturas modernas.</p>
+        <span class="tipo-tag">Microservicios</span>
+      </div>
+    </div>
+    <div class="req-row">
+      <div class="req-block">
+        <div class="section-kicker fu">Relación con requisitos del sistema</div>
+        <h3 class="fu" style="transition-delay:.1s;font-family:'Barlow Condensed',sans-serif;font-size:18px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;">Factores para elegir la arquitectura</h3>
+        <div class="req-items fu" style="transition-delay:.2s">
+          <div class="req-item"><span class="req-icon">⚡</span><span class="req-text"><strong>Rendimiento:</strong> distribuidas y cliente-servidor permiten paralelismo y mayor velocidad</span></div>
+          <div class="req-item"><span class="req-icon">🔁</span><span class="req-text"><strong>Disponibilidad:</strong> nube y distribuidas garantizan alta disponibilidad mediante replicación y balanceo</span></div>
+          <div class="req-item"><span class="req-icon">🔒</span><span class="req-text"><strong>Consistencia:</strong> centralizadas y cliente-servidor facilitan la consistencia fuerte</span></div>
+          <div class="req-item"><span class="req-icon">📈</span><span class="req-text"><strong>Escalabilidad:</strong> nube y distribuidas se ajustan dinámicamente a la demanda</span></div>
+        </div>
+      </div>
+      <div class="req-block">
+        <div class="section-kicker fu">Casos de uso reales</div>
+        <h3 class="fu" style="transition-delay:.1s;font-family:'Barlow Condensed',sans-serif;font-size:18px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;">Ejemplos por sector</h3>
+        <div class="req-items fu" style="transition-delay:.2s">
+          <div class="req-item"><span class="req-icon">🏦</span><span class="req-text"><strong>Banco:</strong> cliente-servidor para separar operaciones de usuarios y procesamiento de datos</span></div>
+          <div class="req-item"><span class="req-icon">📱</span><span class="req-text"><strong>Red social:</strong> sistema distribuido para manejar millones de interacciones</span></div>
+          <div class="req-item"><span class="req-icon">🚀</span><span class="req-text"><strong>Startup:</strong> aplicación en la nube para escalar según la demanda</span></div>
+          <div class="req-item"><span class="req-icon">🏛️</span><span class="req-text"><strong>Universidad:</strong> cliente-servidor para gestión académica multiusuario</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+ 
+<!-- ── S3: MODELADO ── -->
+<section id="s3">
+  <div class="s-band">
+    <span class="s-band-num">03</span>
+    <span class="s-band-title">Modelado de Datos y Niveles de Abstracción</span>
+    <span class="s-band-sep"></span>
+    <span class="s-band-tag">Conceptual · Lógico · Físico · Técnicas</span>
+  </div>
+  <div class="s3-body">
+    <div class="s3-left">
+      <div class="s3-top">
+        <div class="section-kicker fu">Tema 03 · Modelado</div>
+        <h2 class="section-h fu" style="transition-delay:.1s">Modelado<br><em>de Datos</em></h2>
+        <p class="body-text fu" style="transition-delay:.2s">
+          El <strong>modelado de datos</strong> es el proceso que transforma los requisitos del negocio en un diseño técnico implementable en un DBMS. Representa, de forma estructurada, cómo se organizan, relacionan y almacenan los datos.
+        </p>
+        <p class="body-text fu" style="transition-delay:.25s;margin-top:12px">
+          Incluye la <strong>normalización</strong> para garantizar la integridad y consistencia, así como la <strong>desnormalización y materialización</strong> cuando es necesario optimizar el rendimiento.
+        </p>
+        <div class="section-kicker fu" style="transition-delay:.3s;margin-top:28px">Técnicas de modelado</div>
+        <div class="tec-list fu" style="transition-delay:.35s">
+          <div class="tec-item">
+            <span class="tec-label">Modelo ER</span>
+            <span class="tec-text">Representa entidades, atributos y relaciones. Ampliamente usado en BD transaccionales. Herramienta: diagrama Entidad-Relación.</span>
+          </div>
+          <div class="tec-item">
+            <span class="tec-label">UML</span>
+            <span class="tec-text">Diagramas de clases para sistemas orientados a objetos. <strong>Ideal para sistemas bancarios y empresariales.</strong></span>
+          </div>
+          <div class="tec-item">
+            <span class="tec-label">Dimensional</span>
+            <span class="tec-text">Esquema estrella y copos de nieve para Business Intelligence. Optimizan consultas analíticas sobre grandes volúmenes.</span>
+          </div>
+        </div>
+      </div>
+      <div class="s3-bot">
+        <div class="pull-quote fu" style="transition-delay:.2s;border-left-width:2px;">
+          Trabajar en niveles asegura la trazabilidad entre lo que necesita la organización y lo que se implementa en el sistema.
+        </div>
+      </div>
+    </div>
+    <div class="s3-right">
+      <div class="s3-top">
+        <div class="section-kicker fu">Los 3 niveles del proceso</div>
+        <h3 class="fu" style="transition-delay:.1s;font-family:'Barlow Condensed',sans-serif;font-size:20px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;margin-bottom:4px;">Niveles de Abstracción</h3>
+        <p class="body-text fu" style="transition-delay:.15s;margin-bottom:0">Del requisito de negocio a la implementación técnica.</p>
+        <div class="nivel-stack fu" style="transition-delay:.2s">
+          <div class="nivel">
+            <div class="nivel-badge">Nivel 01</div>
+            <div class="nivel-title">Conceptual</div>
+            <p class="nivel-body-t">Representa los datos a nivel general, sin aspectos técnicos. Refleja las <strong>entidades del negocio, sus atributos y relaciones</strong>. Herramienta: diagrama Entidad-Relación (ER).</p>
+          </div>
+          <div class="nivel">
+            <div class="nivel-badge">Nivel 02</div>
+            <div class="nivel-title">Lógico</div>
+            <p class="nivel-body-t">Traduce el modelo conceptual a estructuras comprensibles por un DBMS: tablas, claves primarias y foráneas, relaciones y restricciones. <strong>Sin considerar aún la implementación física.</strong></p>
+          </div>
+          <div class="nivel">
+            <div class="nivel-badge">Nivel 03</div>
+            <div class="nivel-title">Físico</div>
+            <p class="nivel-body-t">Implementación en el DBMS elegido. Define estructuras físicas de almacenamiento, <strong>índices, particiones, tipos de datos</strong> y consideraciones de rendimiento.</p>
+          </div>
+        </div>
+      </div>
+      <div class="s3-bot">
+        <div class="section-kicker fu">Proceso completo</div>
+        <p class="body-text fu" style="transition-delay:.1s;font-size:13px;">
+          El proceso va de lo abstracto a lo concreto: primero se define <strong>qué</strong> datos existen (conceptual), luego <strong>cómo se relacionan</strong> (lógico), y finalmente <strong>dónde y cómo se almacenan</strong> físicamente (físico). Este flujo garantiza que cada decisión técnica esté respaldada por un requisito del negocio.
+        </p>
+      </div>
+    </div>
+  </div>
+</section>
+ 
+<!-- ── S4: NORMALIZACIÓN ── -->
+<section id="s4">
+  <div class="s-band">
+    <span class="s-band-num">04</span>
+    <span class="s-band-title">Normalización, Formas Normales y Desnormalización</span>
+    <span class="s-band-sep"></span>
+    <span class="s-band-tag">1FN · 2FN · 3FN · BCNF · Desnormalización</span>
+  </div>
+  <div class="s4-body">
+    <div class="s4-top">
+      <div class="s4-intro">
+        <div class="section-kicker fu">Tema 04 · Normalización</div>
+        <h2 class="section-h fu" style="transition-delay:.1s;font-size:clamp(22px,2.5vw,36px)">¿Qué es la<br><em>Normalización?</em></h2>
+        <p class="body-text fu" style="transition-delay:.2s">
+          La <strong>normalización</strong> es el proceso de organizar las tablas y relaciones de una BD para <strong>reducir la redundancia y mejorar la integridad de los datos</strong>.
+        </p>
+        <div class="imp-grid fu" style="transition-delay:.3s;margin-top:20px;">
+          <div class="imp-chip"><span>Ventaja</span>Mejora consistencia e integridad de datos</div>
+          <div class="imp-chip"><span>Ventaja</span>Reduce redundancia entre tablas</div>
+          <div class="imp-chip"><span>Impacto</span>Mayor complejidad en consultas complejas</div>
+          <div class="imp-chip"><span>Impacto</span>Obliga a relaciones más precisas</div>
+        </div>
+      </div>
+ 
+      <div class="s4-fns">
+        <div class="section-kicker fu">Formas normales</div>
+        <h3 class="fu" style="transition-delay:.1s;font-family:'Barlow Condensed',sans-serif;font-size:18px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;margin-bottom:4px;">Las 4 formas esenciales</h3>
+        <div class="fn-list fu" style="transition-delay:.2s">
+          <div class="fn-row">
+            <div class="fn-code">1FN</div>
+            <div class="fn-content">
+              <div class="fn-name">Primera Forma Normal</div>
+              <div class="fn-desc">Elimina grupos repetidos y asegura atomicidad. Cada celda contiene un único valor.</div>
+            </div>
+          </div>
+          <div class="fn-row">
+            <div class="fn-code">2FN</div>
+            <div class="fn-content">
+              <div class="fn-name">Segunda Forma Normal</div>
+              <div class="fn-desc">Elimina dependencias parciales de claves compuestas. Cada atributo depende de toda la clave primaria.</div>
+            </div>
+          </div>
+          <div class="fn-row">
+            <div class="fn-code">3FN</div>
+            <div class="fn-content">
+              <div class="fn-name">Tercera Forma Normal</div>
+              <div class="fn-desc">Elimina dependencias transitivas. Los atributos no clave dependen únicamente de la clave primaria.</div>
+            </div>
+          </div>
+          <div class="fn-row">
+            <div class="fn-code">BCNF</div>
+            <div class="fn-content">
+              <div class="fn-name">Forma Normal de Boyce-Codd</div>
+              <div class="fn-desc">Forma avanzada que refuerza la 3FN. Toda determinante es una superclave.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+ 
+      <div class="s4-desn">
+        <div class="section-kicker fu">Desnormalización y Materialización</div>
+        <h3 class="fu" style="transition-delay:.1s;font-family:'Barlow Condensed',sans-serif;font-size:18px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;margin-bottom:12px;">El proceso inverso</h3>
+        <p class="body-text fu" style="transition-delay:.2s;font-size:13px">
+          La <strong>desnormalización</strong> combina tablas o duplica datos para <strong>mejorar el rendimiento</strong> en consultas específicas. La <strong>materialización</strong> crea vistas o tablas con resultados de consultas frecuentes.
+        </p>
+        <div class="desn-highlight fu" style="transition-delay:.3s">
+          Son esenciales en entornos de Big Data y Data Warehousing. Reducen la latencia en consultas complejas.
+        </div>
+        <div class="obj-list fu" style="transition-delay:.35s;margin-top:14px;">
+          <div class="obj-item"><span class="obj-num">→</span><span class="obj-text" style="font-size:12.5px">Sistemas de análisis (BI) donde prima la velocidad</span></div>
+          <div class="obj-item"><span class="obj-num">→</span><span class="obj-text" style="font-size:12.5px">Consultas más frecuentes que actualizaciones</span></div>
+          <div class="obj-item"><span class="obj-num">→</span><span class="obj-text" style="font-size:12.5px">Costos de acceso distribuido superan los beneficios</span></div>
+        </div>
+      </div>
+    </div>
+ 
+    <div class="s4-bot">
+      <div class="s4-ex">
+        <div class="section-kicker fu">Ejemplos prácticos</div>
+        <h3 class="fu" style="transition-delay:.1s;font-family:'Barlow Condensed',sans-serif;font-size:18px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;margin-bottom:4px;">Casos de aplicación</h3>
+        <div class="ex-list fu" style="transition-delay:.2s">
+          <div class="ex-item"><span class="ex-icon">🏫</span><span class="ex-text"><strong>Normalización (colegio):</strong> Se aplica 3FN en BD de estudiantes para evitar duplicación de nombres y cursos.</span></div>
+          <div class="ex-item"><span class="ex-icon">🛍️</span><span class="ex-text"><strong>Desnormalización (supermercado):</strong> Desnormaliza datos de inventarios para consultas rápidas de ventas diarias.</span></div>
+          <div class="ex-item"><span class="ex-icon">🎓</span><span class="ex-text"><strong>Materialización (universidad):</strong> Vistas materializadas para consultas frecuentes de calificaciones.</span></div>
+          <div class="ex-item"><span class="ex-icon">📡</span><span class="ex-text"><strong>Telecomunicaciones:</strong> Desnormalización en data warehouse para reportes diarios de tráfico de red.</span></div>
+        </div>
+      </div>
+      <div class="s4-imp">
+        <div class="section-kicker fu">Normalización paso a paso</div>
+        <h3 class="fu" style="transition-delay:.1s;font-family:'Barlow Condensed',sans-serif;font-size:18px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;margin-bottom:12px;">Tabla de pedidos → 3FN</h3>
+        <div class="comp-block fu" style="transition-delay:.2s">
+          <div class="comp-row" style="border-left-color:#aaa"><strong>Tabla original (sin normalizar)</strong>Pedido(id_pedido, cliente_nombre, cliente_dir, producto, precio, categoria)</div>
+          <div class="comp-row"><strong>1FN — Atomicidad</strong>Separar valores atómicos. No hay grupos repetidos ni multivalores.</div>
+          <div class="comp-row"><strong>2FN — Sin dep. parciales</strong>CLIENTE(id_cliente, nombre, dirección) + PRODUCTO(id_producto, nombre, precio, categoria)</div>
+          <div class="comp-row"><strong>3FN — Sin dep. transitivas</strong>CATEGORIA(id_cat, nombre). Resultado: 4 tablas normalizadas con claves foráneas.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+ 
+<!-- ── S5: ACTIVIDADES ── -->
+<section id="s5">
+  <div class="s-band">
+    <span class="s-band-num">05</span>
+    <span class="s-band-title">Actividades Resueltas · Semana 03</span>
+    <span class="s-band-sep"></span>
+    <span class="s-band-tag">Evidencias · Diagramas · Diseño lógico</span>
+  </div>
+  <div class="s5-body">
+    <div class="s5-header">
+      <div class="section-kicker fu">Evidencias y productos</div>
+      <h2 class="section-h fu" style="transition-delay:.1s;font-size:clamp(22px,2.5vw,36px)">Elaboración de diagramas de arquitectura, documentos de diseño lógico y propuestas de normalización para distintos sistemas.</h2>
+    </div>
+    <div class="s5-grid">
+      <div class="s5-col">
+        <div class="s5-ev">
+          <div class="ev-tag">Evidencia 01 · Diagrama de Arquitectura</div>
+          <div class="ev-h">Sistema Hospitalario</div>
+          <p class="ev-body">Se recomienda <strong>arquitectura cliente-servidor con extensión distribuida</strong>. El servidor central gestiona los datos clínicos, mientras múltiples clientes acceden desde consultorios, urgencias y laboratorios. Los módulos críticos como UCI se replican en nodos distribuidos.</p>
+          <div class="qa-block">
+            <div class="qa">
+              <div class="qa-q">Componentes del diagrama</div>
+              <div class="qa-a"><strong>Capa de presentación:</strong> aplicaciones web/escritorio · <strong>Capa lógica:</strong> servidor de aplicaciones · <strong>Capa de datos:</strong> BD central + réplicas · <strong>Capa de seguridad:</strong> autenticación LDAP + cifrado TLS</div>
+            </div>
+          </div>
+        </div>
+        <div class="s5-ev">
+          <div class="ev-tag">Evidencia 01 · cont.</div>
+          <div class="ev-h">Sistema Universitario</div>
+          <p class="ev-body"><strong>Arquitectura cliente-servidor con BD centralizada.</strong> La consistencia fuerte es prioritaria para las notas. PostgreSQL centralizado con transacciones ACID, módulo de reportes con vistas materializadas y backup automatizado diario.</p>
+        </div>
+      </div>
+      <div class="s5-col">
+        <div class="s5-ev">
+          <div class="ev-tag">Evidencia 02 · Diseño Lógico</div>
+          <div class="ev-h">Sistema Académico: ER → Lógico → Físico</div>
+          <div class="qa-block">
+            <div class="qa">
+              <div class="qa-q">Nivel Conceptual (ER)</div>
+              <div class="qa-a">Entidades: <strong>Estudiante, Curso, Docente, Matrícula, Nota.</strong> Relaciones: Estudiante se matricula en Curso, Docente imparte Curso, Matrícula genera Nota.</div>
+            </div>
+            <div class="qa">
+              <div class="qa-q">Nivel Lógico</div>
+              <div class="qa-a">ESTUDIANTE(id, nombre, apellido, dni) · CURSO(id, nombre, creditos, ciclo) · MATRICULA(id_est, id_curso, fecha, estado) · NOTA(id_mat, parcial1, parcial2, final)</div>
+            </div>
+            <div class="qa">
+              <div class="qa-q">Nivel Físico (SQL Server/PostgreSQL)</div>
+              <div class="qa-a">Índices en id_estudiante y id_curso. Tipos: <strong>VARCHAR(100)</strong> para nombres, <strong>DECIMAL(4,2)</strong> para notas. Particionamiento por ciclo académico.</div>
+            </div>
+          </div>
+        </div>
+        <div class="s5-ev">
+          <div class="ev-tag">Evidencia 03 · Desnormalización aplicada</div>
+          <div class="ev-h">Reportes de ventas: de 15s a &lt;1s</div>
+          <p class="ev-body">Se crea tabla <strong>REPORTE_VENTAS_DIARIAS</strong>(fecha, región, producto, cantidad_total, monto_total) que pre-agrega los datos. Elimina la necesidad de joins entre 5 tablas normalizadas. Se actualiza mediante proceso batch nocturno.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+ 
+<!-- ── S6: CIERRE ── -->
+<section id="s6">
+  <div class="close-left">
+    <div>
+      <div class="close-big">La<br>arqui<em>tectura</em><br>define<br>el futuro.</div>
+    </div>
+    <div>
+      <p class="close-sub">Comprender y diseñar correctamente la arquitectura de una base de datos es la diferencia entre un sistema que crece con la organización y uno que colapsa bajo la demanda.</p>
+      <div class="close-meta" style="margin-top:36px;">
+        <div class="cm-row"><span class="cm-lbl">Estudiante</span><span class="cm-val">Alexandra Milagros Cuchula Daniel</span></div>
+        <div class="cm-row"><span class="cm-lbl">Docente</span><span class="cm-val">Mg. Ing. Raúl Fernández Bejarano</span></div>
+        <div class="cm-row"><span class="cm-lbl">Curso</span><span class="cm-val">Base de Datos II · UPLA · 2025</span></div>
+      </div>
+    </div>
+  </div>
+  <div class="close-right">
+    <div>
+      <div class="rubric-title">Rúbricas de aprendizaje · Criterios de evaluación</div>
+      <div class="rubric-list">
+        <div class="rubric-item"><span class="rubric-num">01</span><span class="rubric-text"><strong>Claridad</strong> en la definición de objetivos de la arquitectura de BD</span></div>
+        <div class="rubric-item"><span class="rubric-num">02</span><span class="rubric-text"><strong>Identificación correcta</strong> de los componentes del sistema propuesto</span></div>
+        <div class="rubric-item"><span class="rubric-num">03</span><span class="rubric-text"><strong>Pertinencia</strong> de la arquitectura elegida frente a los requisitos del caso</span></div>
+        <div class="rubric-item"><span class="rubric-num">04</span><span class="rubric-text"><strong>Calidad visual y técnica</strong> del diagrama de arquitectura entregado</span></div>
+        <div class="rubric-item"><span class="rubric-num">05</span><span class="rubric-text"><strong>Claridad y corrección</strong> del modelo conceptual, lógico y físico</span></div>
+        <div class="rubric-item"><span class="rubric-num">06</span><span class="rubric-text"><strong>Pertinencia</strong> de la técnica de modelado seleccionada (ER, UML, Dimensional)</span></div>
+        <div class="rubric-item"><span class="rubric-num">07</span><span class="rubric-text"><strong>Correcta aplicación</strong> de las formas de normalización (1FN a BCNF)</span></div>
+        <div class="rubric-item"><span class="rubric-num">08</span><span class="rubric-text"><strong>Justificación coherente</strong> en desnormalización y materialización</span></div>
+      </div>
+    </div>
+    <div class="close-stamp">Base de Datos II · Semana 03 · UPLA · 2025 · E-portafolio</div>
+  </div>
+</section>
+ 
+<script>
+  // Cursor
+  const cur = document.getElementById('cur');
+  document.addEventListener('mousemove', e => {
+    cur.style.left = e.clientX + 'px';
+    cur.style.top = e.clientY + 'px';
+  });
+  document.querySelectorAll('a,button,[onclick],.tipo-col,.nivel,.rubric-item,.idx-item').forEach(el => {
+    el.addEventListener('mouseenter', () => cur.classList.add('big'));
+    el.addEventListener('mouseleave', () => cur.classList.remove('big'));
+  });
+ 
+  // Sections
+  const sections = document.querySelectorAll('section');
+  const nd = document.getElementById('nd');
+  const pf = document.getElementById('pf');
+  const labels = ['Portada','Fundamentos','Tipos','Modelado','Normalización','Actividades','Cierre'];
+ 
+  sections.forEach((_, i) => {
+    const d = document.createElement('div');
+    d.className = 'dot' + (i === 0 ? ' on' : '');
+    d.title = labels[i] || '';
+    d.onclick = () => go(i);
+    nd.appendChild(d);
+  });
+ 
+  function go(i) { sections[i].scrollIntoView({ behavior: 'smooth' }); }
+ 
+  const obs = new IntersectionObserver(entries => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        const idx = [...sections].indexOf(e.target);
+        document.querySelectorAll('.dot').forEach((d, i) => d.classList.toggle('on', i === idx));
+        pf.style.width = (idx / (sections.length - 1) * 100) + '%';
+        e.target.classList.add('vis');
+        e.target.querySelectorAll('.fu,.fr').forEach((el, i) => {
+          setTimeout(() => el.classList.add('show'), 80 + i * 40);
+        });
+      }
+    });
+  }, { threshold: 0.15 });
+  sections.forEach(s => obs.observe(s));
+ 
+  document.addEventListener('keydown', e => {
+    const a = [...document.querySelectorAll('.dot')].findIndex(d => d.classList.contains('on'));
+    if (e.key === 'ArrowDown' || e.key === 'ArrowRight') go(Math.min(a + 1, sections.length - 1));
+    if (e.key === 'ArrowUp' || e.key === 'ArrowLeft') go(Math.max(a - 1, 0));
+  });
+</script>
+</body>
+</html>
