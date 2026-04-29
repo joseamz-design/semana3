@@ -21,15 +21,15 @@ body{
 ::-webkit-scrollbar{width:3px;}
 ::-webkit-scrollbar-track{background:var(--paper);}
 ::-webkit-scrollbar-thumb{background:var(--ink);}
- 
+
 /* CURSOR */
 .cur{position:fixed;width:10px;height:10px;background:var(--ink);border-radius:50%;pointer-events:none;z-index:9999;transform:translate(-50%,-50%);transition:width .2s,height .2s,background .2s;}
 .cur.big{width:36px;height:36px;background:transparent;border:1.5px solid var(--ink);}
- 
+
 /* PROGRESS */
 .pbar{position:fixed;top:0;left:0;right:0;height:2px;background:var(--paper3);z-index:300;}
 .pfill{height:100%;background:var(--ink);transition:width .3s;}
- 
+
 /* NAV */
 .nav{
   position:fixed;top:0;left:0;right:0;z-index:200;
@@ -43,16 +43,16 @@ body{
 .nav-right{display:flex;gap:28px;justify-content:flex-end;}
 .nav-link{font-family:'Barlow Condensed',sans-serif;font-size:11px;letter-spacing:.15em;text-transform:uppercase;color:var(--ink3);cursor:pointer;transition:color .2s;text-decoration:none;}
 .nav-link:hover{color:var(--ink);}
- 
+
 /* SIDE DOTS */
 .dots{position:fixed;right:20px;top:50%;transform:translateY(-50%);display:flex;flex-direction:column;gap:10px;z-index:200;}
 .dot{width:7px;height:7px;border-radius:50%;background:var(--paper3);border:1px solid var(--ink3);cursor:pointer;transition:all .3s;}
 .dot.on{background:var(--ink);border-color:var(--ink);}
- 
+
 /* SECTIONS */
 section{min-height:100vh;padding:52px 0 0;display:flex;align-items:stretch;position:relative;opacity:0;transform:translateY(24px);transition:opacity .8s,transform .8s;}
 section.vis{opacity:1;transform:translateY(0);}
- 
+
 /* ── S0: COVER ── */
 #s0{
   display:grid;grid-template-columns:1fr 1fr;
@@ -82,7 +82,7 @@ section.vis{opacity:1;transform:translateY(0);}
 .meta-row{display:flex;align-items:baseline;gap:10px;}
 .meta-lbl{font-family:'Barlow Condensed',sans-serif;font-size:10px;letter-spacing:.2em;text-transform:uppercase;color:var(--ink4);min-width:80px;}
 .meta-val{font-size:13px;font-weight:600;}
- 
+
 .cover-right{
   padding:80px 80px 80px 60px;
   display:flex;flex-direction:column;justify-content:space-between;
@@ -103,7 +103,7 @@ section.vis{opacity:1;transform:translateY(0);}
 .scroll-hint{font-family:'Barlow Condensed',sans-serif;font-size:10px;letter-spacing:.3em;text-transform:uppercase;color:rgba(255,255,255,.3);display:flex;align-items:center;gap:10px;cursor:pointer;}
 .scroll-hint::after{content:'↓';font-size:14px;animation:bob 2s ease-in-out infinite;}
 @keyframes bob{0%,100%{transform:translateY(0);}50%{transform:translateY(5px);}}
- 
+
 /* ── SECTION HEADER BAND ── */
 .s-band{
   position:absolute;top:52px;left:0;right:0;height:48px;
@@ -115,7 +115,7 @@ section.vis{opacity:1;transform:translateY(0);}
 .s-band-title{font-family:'Barlow Condensed',sans-serif;font-size:13px;font-weight:700;letter-spacing:.2em;text-transform:uppercase;color:white;}
 .s-band-sep{flex:1;height:1px;background:rgba(255,255,255,.15);}
 .s-band-tag{font-family:'Barlow Condensed',sans-serif;font-size:10px;letter-spacing:.2em;text-transform:uppercase;color:rgba(255,255,255,.4);}
- 
+
 /* ── S1: FUNDAMENTOS ── */
 #s1{flex-direction:column;}
 .s1-body{
@@ -131,7 +131,7 @@ section.vis{opacity:1;transform:translateY(0);}
 }
 .s1-a{border-bottom:1px solid var(--rule);padding:40px 40px 40px 40px;}
 .s1-b{padding:40px;}
- 
+
 .section-kicker{font-family:'Barlow Condensed',sans-serif;font-size:10px;letter-spacing:.3em;text-transform:uppercase;color:var(--ink4);margin-bottom:16px;display:flex;align-items:center;gap:10px;}
 .section-kicker::before{content:'';width:16px;height:1px;background:var(--ink4);}
 .section-h{font-family:'Playfair Display',serif;font-size:clamp(28px,3vw,42px);font-weight:700;line-height:1.1;margin-bottom:20px;}
@@ -139,7 +139,7 @@ section.vis{opacity:1;transform:translateY(0);}
 .body-text{font-size:14px;font-weight:300;line-height:1.85;color:var(--ink2);}
 .body-text strong{font-weight:600;color:var(--ink);}
 .body-text + .body-text{margin-top:14px;}
- 
+
 .pull-quote{
   border-left:3px solid var(--ink);
   padding:16px 20px;margin:28px 0;
@@ -147,7 +147,7 @@ section.vis{opacity:1;transform:translateY(0);}
   font-size:17px;font-style:italic;
   line-height:1.6;color:var(--ink2);
 }
- 
+
 .obj-list{margin-top:20px;display:flex;flex-direction:column;gap:10px;}
 .obj-item{
   display:flex;gap:14px;align-items:flex-start;
@@ -156,11 +156,11 @@ section.vis{opacity:1;transform:translateY(0);}
 .obj-num{font-family:'Barlow Condensed',sans-serif;font-size:10px;font-weight:700;color:var(--ink4);min-width:24px;padding-top:2px;}
 .obj-text{font-size:13px;font-weight:400;line-height:1.6;color:var(--ink2);}
 .obj-text strong{color:var(--ink);font-weight:600;}
- 
+
 .comp-block{margin-top:16px;display:flex;flex-direction:column;gap:6px;}
 .comp-row{padding:12px 14px;background:var(--paper2);border-left:2px solid var(--ink);font-size:12.5px;line-height:1.6;}
 .comp-row strong{display:block;font-size:11px;font-family:'Barlow Condensed',sans-serif;letter-spacing:.1em;text-transform:uppercase;margin-bottom:3px;}
- 
+
 /* ── S2: TIPOS ── */
 #s2{flex-direction:column;}
 .s2-body{flex:1;margin-top:100px;}
@@ -183,7 +183,7 @@ section.vis{opacity:1;transform:translateY(0);}
 .tipo-name{font-family:'Barlow Condensed',sans-serif;font-size:15px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;margin-bottom:10px;}
 .tipo-body-t{font-size:12px;line-height:1.7;color:var(--ink3);transition:color .3s;}
 .tipo-tag{display:inline-block;margin-top:10px;font-size:10px;font-family:'Barlow Condensed',sans-serif;letter-spacing:.1em;padding:3px 8px;border:1px solid var(--paper3);color:var(--ink3);transition:all .3s;}
- 
+
 .req-row{
   display:grid;grid-template-columns:1fr 1fr;
   border-bottom:1px solid var(--rule);
@@ -196,7 +196,7 @@ section.vis{opacity:1;transform:translateY(0);}
 .req-icon{font-size:16px;min-width:24px;}
 .req-text{font-size:13px;line-height:1.6;color:var(--ink2);}
 .req-text strong{color:var(--ink);font-weight:600;}
- 
+
 /* ── S3: MODELADO ── */
 #s3{flex-direction:column;}
 .s3-body{flex:1;margin-top:100px;display:grid;grid-template-columns:1fr 1fr;}
@@ -206,7 +206,7 @@ section.vis{opacity:1;transform:translateY(0);}
 .s3-bot{padding:40px 60px;}
 .s3-right .s3-top{padding:48px 80px 48px 60px;}
 .s3-right .s3-bot{padding:40px 80px 40px 60px;}
- 
+
 .nivel-stack{display:flex;flex-direction:column;gap:0;margin-top:24px;}
 .nivel{
   padding:20px 22px;border:1px solid var(--rule);border-top:none;
@@ -221,14 +221,14 @@ section.vis{opacity:1;transform:translateY(0);}
 .nivel-badge{display:inline-block;font-family:'Barlow Condensed',sans-serif;font-size:9px;letter-spacing:.2em;text-transform:uppercase;padding:2px 8px;background:var(--paper3);color:var(--ink3);border-radius:0;margin-bottom:8px;transition:all .3s;}
 .nivel-title{font-family:'Barlow Condensed',sans-serif;font-size:16px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;margin-bottom:8px;transition:color .3s;}
 .nivel-body-t{font-size:12.5px;line-height:1.7;color:var(--ink3);transition:color .3s;}
- 
+
 .tec-list{margin-top:20px;display:flex;flex-direction:column;gap:14px;}
 .tec-item{padding:16px 0;border-bottom:1px solid var(--rule2);display:grid;grid-template-columns:80px 1fr;gap:16px;}
 .tec-item:last-child{border-bottom:none;}
 .tec-label{font-family:'Barlow Condensed',sans-serif;font-size:10px;font-weight:700;letter-spacing:.15em;text-transform:uppercase;color:var(--ink4);padding-top:2px;}
 .tec-text{font-size:13px;line-height:1.65;color:var(--ink2);}
 .tec-text strong{color:var(--ink);}
- 
+
 /* ── S4: NORMALIZACIÓN ── */
 #s4{flex-direction:column;}
 .s4-body{flex:1;margin-top:100px;}
@@ -239,7 +239,7 @@ section.vis{opacity:1;transform:translateY(0);}
 .s4-intro{padding:48px 60px 48px 80px;border-right:1px solid var(--rule);}
 .s4-fns{padding:48px 60px;border-right:1px solid var(--rule);}
 .s4-desn{padding:48px 80px 48px 60px;}
- 
+
 .fn-list{margin-top:20px;display:flex;flex-direction:column;gap:0;}
 .fn-row{
   display:flex;gap:0;border-bottom:1px solid var(--rule);
@@ -257,28 +257,28 @@ section.vis{opacity:1;transform:translateY(0);}
 .fn-content{padding:16px 16px;}
 .fn-name{font-size:13px;font-weight:600;color:var(--ink);margin-bottom:4px;}
 .fn-desc{font-size:12px;color:var(--ink3);line-height:1.6;}
- 
+
 .desn-highlight{
   background:var(--ink);color:var(--paper);
   padding:20px 22px;margin-top:20px;
   font-family:'Playfair Display',serif;
   font-size:15px;font-style:italic;line-height:1.65;
 }
- 
+
 .s4-bot{
   display:grid;grid-template-columns:1fr 1fr;
   border-bottom:1px solid var(--rule);
 }
 .s4-ex{padding:40px 60px 40px 80px;border-right:1px solid var(--rule);}
 .s4-imp{padding:40px 80px 40px 60px;}
- 
+
 .ex-list{margin-top:16px;display:flex;flex-direction:column;gap:10px;}
 .ex-item{display:flex;gap:12px;align-items:flex-start;padding:12px 0;border-bottom:1px solid var(--rule2);}
 .ex-item:last-child{border-bottom:none;}
 .ex-icon{font-size:14px;min-width:22px;margin-top:1px;}
 .ex-text{font-size:13px;line-height:1.65;color:var(--ink2);}
 .ex-text strong{color:var(--ink);}
- 
+
 .imp-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:16px;}
 .imp-chip{
   padding:12px 14px;background:var(--paper2);
@@ -286,7 +286,7 @@ section.vis{opacity:1;transform:translateY(0);}
   border-left:2px solid var(--ink);
 }
 .imp-chip span{display:block;font-family:'Barlow Condensed',sans-serif;font-size:9px;letter-spacing:.15em;text-transform:uppercase;color:var(--ink4);margin-bottom:4px;}
- 
+
 /* ── S5: ACTIVIDADES ── */
 #s5{flex-direction:column;}
 .s5-body{flex:1;margin-top:100px;}
@@ -299,19 +299,19 @@ section.vis{opacity:1;transform:translateY(0);}
 .s5-ev{padding:36px 60px 36px 80px;border-bottom:1px solid var(--rule);}
 .s5-col:last-child .s5-ev{padding:36px 80px 36px 60px;}
 .s5-col:last-child .s5-ev:last-child{border-bottom:none;}
- 
+
 .ev-tag{font-family:'Barlow Condensed',sans-serif;font-size:10px;letter-spacing:.25em;text-transform:uppercase;color:var(--ink4);margin-bottom:12px;display:flex;align-items:center;gap:8px;}
 .ev-tag::before{content:'';width:12px;height:1px;background:var(--ink4);}
 .ev-h{font-family:'Barlow Condensed',sans-serif;font-size:18px;font-weight:700;letter-spacing:.02em;text-transform:uppercase;margin-bottom:12px;}
 .ev-body{font-size:13px;font-weight:300;color:var(--ink2);line-height:1.75;}
 .ev-body strong{font-weight:600;color:var(--ink);}
- 
+
 .qa-block{margin-top:16px;display:flex;flex-direction:column;gap:10px;}
 .qa{border:1px solid var(--rule);padding:14px 16px;}
 .qa-q{font-size:12px;font-weight:700;color:var(--ink);margin-bottom:8px;padding-bottom:8px;border-bottom:1px solid var(--rule2);}
 .qa-a{font-size:12px;line-height:1.7;color:var(--ink3);}
 .qa-a strong{color:var(--ink2);font-weight:600;}
- 
+
 /* ── S6: CIERRE ── */
 #s6{
   display:grid;grid-template-columns:1fr 1fr;
@@ -334,7 +334,7 @@ section.vis{opacity:1;transform:translateY(0);}
 .cm-row{display:flex;flex-direction:column;gap:3px;}
 .cm-lbl{font-family:'Barlow Condensed',sans-serif;font-size:9px;letter-spacing:.3em;text-transform:uppercase;color:rgba(255,255,255,.3);}
 .cm-val{font-size:14px;font-weight:500;}
- 
+
 .close-right{
   padding:80px;
   display:flex;flex-direction:column;justify-content:space-between;
@@ -352,20 +352,20 @@ section.vis{opacity:1;transform:translateY(0);}
 .rubric-num{font-family:'Barlow Condensed',sans-serif;font-size:10px;font-weight:700;color:var(--ink4);min-width:24px;padding-top:2px;}
 .rubric-text{font-size:13px;line-height:1.6;color:var(--ink2);}
 .rubric-text strong{color:var(--ink);font-weight:600;}
- 
+
 .close-stamp{
   font-family:'Barlow Condensed',sans-serif;
   font-size:10px;letter-spacing:.25em;text-transform:uppercase;
   color:var(--ink4);border-top:1px solid var(--rule);
   padding-top:20px;
 }
- 
+
 /* ANIMATIONS */
 .fu{opacity:0;transform:translateY(20px);transition:opacity .6s,transform .6s;}
 .fu.show{opacity:1;transform:translateY(0);}
 .fr{opacity:0;transform:translateX(-20px);transition:opacity .6s,transform .6s;}
 .fr.show{opacity:1;transform:translateX(0);}
- 
+
 @media(max-width:900px){
   #s0,#s1 .s1-body,#s2 .req-row,#s3 .s3-body,#s4 .s4-top,#s4 .s4-bot,#s5 .s5-grid,#s6{grid-template-columns:1fr;}
   .cover-right{display:none;}
@@ -380,10 +380,10 @@ section.vis{opacity:1;transform:translateY(0);}
 </style>
 </head>
 <body>
- 
+
 <div class="cur" id="cur"></div>
 <div class="pbar"><div class="pfill" id="pf"></div></div>
- 
+
 <nav class="nav">
   <div class="nav-left">Base de Datos II · UPLA · 2026</div>
   <div class="nav-center">Semana 03</div>
@@ -395,9 +395,9 @@ section.vis{opacity:1;transform:translateY(0);}
     <span class="nav-link" onclick="go(5)">Actividades</span>
   </div>
 </nav>
- 
+
 <div class="dots" id="nd"></div>
- 
+
 <!-- ── S0: PORTADA ── -->
 <section id="s0">
   <div class="cover-left">
@@ -457,7 +457,7 @@ section.vis{opacity:1;transform:translateY(0);}
     <div class="scroll-hint" onclick="go(1)">Comenzar lectura</div>
   </div>
 </section>
- 
+
 <!-- ── S1: FUNDAMENTOS ── -->
 <section id="s1">
   <div class="s-band">
@@ -488,7 +488,7 @@ section.vis{opacity:1;transform:translateY(0);}
         <div class="obj-item"><span class="obj-num">05</span><span class="obj-text"><strong>Proporcionar seguridad:</strong> proteger la información de accesos no autorizados</span></div>
       </div>
     </div>
- 
+
     <div class="s1-a">
       <div class="section-kicker fu" style="transition-delay:.2s">Componentes</div>
       <h3 class="fu" style="transition-delay:.25s;font-family:'Barlow Condensed',sans-serif;font-size:16px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;margin-bottom:12px;">Toda arquitectura integra</h3>
@@ -498,7 +498,7 @@ section.vis{opacity:1;transform:translateY(0);}
         <div class="comp-row"><strong>📋 Catálogo / Metadata</strong>Almacena información sobre la estructura de la BD: tablas, índices, restricciones, usuarios, vistas y permisos.</div>
       </div>
     </div>
- 
+
     <div class="s1-b">
       <div class="comp-block fu" style="transition-delay:.35s">
         <div class="comp-row"><strong>🔒 Capa de seguridad</strong>Protege los datos mediante autenticación de usuarios, control de accesos, cifrado y auditorías.</div>
@@ -507,7 +507,7 @@ section.vis{opacity:1;transform:translateY(0);}
     </div>
   </div>
 </section>
- 
+
 <!-- ── S2: TIPOS ── -->
 <section id="s2">
   <div class="s-band">
@@ -584,7 +584,7 @@ section.vis{opacity:1;transform:translateY(0);}
     </div>
   </div>
 </section>
- 
+
 <!-- ── S3: MODELADO ── -->
 <section id="s3">
   <div class="s-band">
@@ -658,7 +658,7 @@ section.vis{opacity:1;transform:translateY(0);}
     </div>
   </div>
 </section>
- 
+
 <!-- ── S4: NORMALIZACIÓN ── -->
 <section id="s4">
   <div class="s-band">
@@ -682,7 +682,7 @@ section.vis{opacity:1;transform:translateY(0);}
           <div class="imp-chip"><span>Impacto</span>Obliga a relaciones más precisas</div>
         </div>
       </div>
- 
+
       <div class="s4-fns">
         <div class="section-kicker fu">Formas normales</div>
         <h3 class="fu" style="transition-delay:.1s;font-family:'Barlow Condensed',sans-serif;font-size:18px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;margin-bottom:4px;">Las 4 formas esenciales</h3>
@@ -717,7 +717,7 @@ section.vis{opacity:1;transform:translateY(0);}
           </div>
         </div>
       </div>
- 
+
       <div class="s4-desn">
         <div class="section-kicker fu">Desnormalización y Materialización</div>
         <h3 class="fu" style="transition-delay:.1s;font-family:'Barlow Condensed',sans-serif;font-size:18px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;margin-bottom:12px;">El proceso inverso</h3>
@@ -734,7 +734,7 @@ section.vis{opacity:1;transform:translateY(0);}
         </div>
       </div>
     </div>
- 
+
     <div class="s4-bot">
       <div class="s4-ex">
         <div class="section-kicker fu">Ejemplos prácticos</div>
@@ -759,7 +759,7 @@ section.vis{opacity:1;transform:translateY(0);}
     </div>
   </div>
 </section>
- 
+
 <!-- ── S5: ACTIVIDADES ── -->
 <section id="s5">
   <div class="s-band">
@@ -820,7 +820,7 @@ section.vis{opacity:1;transform:translateY(0);}
     </div>
   </div>
 </section>
- 
+
 <!-- ── S6: CIERRE ── -->
 <section id="s6">
   <div class="close-left">
@@ -853,7 +853,7 @@ section.vis{opacity:1;transform:translateY(0);}
     <div class="close-stamp">Base de Datos II · Semana 03 · UPLA · 2026 · E-portafolio</div>
   </div>
 </section>
- 
+
 <script>
   // Cursor
   const cur = document.getElementById('cur');
@@ -865,13 +865,13 @@ section.vis{opacity:1;transform:translateY(0);}
     el.addEventListener('mouseenter', () => cur.classList.add('big'));
     el.addEventListener('mouseleave', () => cur.classList.remove('big'));
   });
- 
+
   // Sections
   const sections = document.querySelectorAll('section');
   const nd = document.getElementById('nd');
   const pf = document.getElementById('pf');
   const labels = ['Portada','Fundamentos','Tipos','Modelado','Normalización','Actividades','Cierre'];
- 
+
   sections.forEach((_, i) => {
     const d = document.createElement('div');
     d.className = 'dot' + (i === 0 ? ' on' : '');
@@ -879,9 +879,9 @@ section.vis{opacity:1;transform:translateY(0);}
     d.onclick = () => go(i);
     nd.appendChild(d);
   });
- 
+
   function go(i) { sections[i].scrollIntoView({ behavior: 'smooth' }); }
- 
+
   const obs = new IntersectionObserver(entries => {
     entries.forEach(e => {
       if (e.isIntersecting) {
@@ -896,7 +896,7 @@ section.vis{opacity:1;transform:translateY(0);}
     });
   }, { threshold: 0.15 });
   sections.forEach(s => obs.observe(s));
- 
+
   document.addEventListener('keydown', e => {
     const a = [...document.querySelectorAll('.dot')].findIndex(d => d.classList.contains('on'));
     if (e.key === 'ArrowDown' || e.key === 'ArrowRight') go(Math.min(a + 1, sections.length - 1));
